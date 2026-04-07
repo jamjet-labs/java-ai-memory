@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <style>
+      .bg { fill: #fafaf7; }
+      .border { fill: none; stroke: #e5e3dd; stroke-width: 2; }
+      .title { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; fill: #1a1a1a; }
+      .title-em { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-style: italic; fill: #1d4ed8; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-weight: 400; fill: #4a4a4a; }
+      .brand { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; fill: #1a1a1a; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; fill: #1d4ed8; letter-spacing: 2px; }
+      .count { font-family: 'JetBrains Mono', monospace; font-weight: 500; fill: #6b7280; }
+      .accent-line { stroke: #1d4ed8; stroke-width: 4; stroke-linecap: round; }
+      .chip { fill: #f4f3ee; stroke: #e5e3dd; stroke-width: 1; }
+      .chip-text { font-family: 'Inter', system-ui, sans-serif; font-weight: 500; fill: #4a4a4a; font-size: 20px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="1200" height="630" />
+
+  <!-- Subtle border -->
+  <rect class="border" x="40" y="40" width="1120" height="550" rx="16" />
+
+  <!-- Top brand -->
+  <g transform="translate(90, 115)">
+    <rect fill="#1d4ed8" width="48" height="48" rx="10" />
+    <text x="24" y="34" font-family="Inter, system-ui" font-size="30" font-weight="700" fill="#ffffff" text-anchor="middle">J</text>
+    <text class="brand" x="68" y="34" font-size="26">Java AI Memory</text>
+  </g>
+
+  <!-- Category label -->
+  <text class="label" x="90" y="215" font-size="15">REFERENCE · UPDATED APRIL 2026</text>
+
+  <!-- Accent line -->
+  <line class="accent-line" x1="90" y1="230" x2="180" y2="230" />
+
+  <!-- Main title -->
+  <text class="title" x="90" y="310" font-size="68">Every agent memory library</text>
+  <text class="title-em" x="90" y="395" font-size="68">for the JVM, compared.</text>
+
+  <!-- Subtitle -->
+  <text class="subtitle" x="90" y="475" font-size="22">LangChain4j · Spring AI · Koog · Google ADK · Embabel · Mem0 · Engram</text>
+
+  <!-- Footer row -->
+  <g transform="translate(90, 530)">
+    <text class="count" font-size="18">9 libraries tracked</text>
+    <text class="count" x="230" font-size="18">12 feature dimensions</text>
+    <text class="count" x="510" font-size="18">Apache 2.0</text>
+  </g>
+
+  <!-- URL -->
+  <text class="brand" x="1110" y="570" font-size="18" text-anchor="end" fill="#6b7280">java-ai-memory.dev</text>
+</svg>

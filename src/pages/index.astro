@@ -3,6 +3,143 @@ import Layout from '../layouts/Layout.astro';
 import { libraries, features, type Support, type MaintenanceStatus } from '../data/libraries';
 
 const lastUpdated = 'April 7, 2026';
+const lastUpdatedISO = '2026-04-07';
+
+// ── Structured data ────────────────────────────────────────────────────────
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Java AI Memory',
+  alternateName: 'java-ai-memory.dev',
+  url: 'https://java-ai-memory.dev/',
+  description:
+    'A neutral comparison of agent memory libraries for Java and the JVM — LangChain4j, Spring AI, Koog, Embabel, Google ADK, Mem0, Engram, and more.',
+  inLanguage: 'en-US',
+  publisher: {
+    '@type': 'Organization',
+    name: 'JamJet',
+    url: 'https://jamjet.dev',
+  },
+};
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Java AI Memory — Comparison of Agent Memory Libraries for the JVM',
+  description:
+    "Every option Java developers have for adding persistent memory to AI agents. LangChain4j ChatMemory, Spring AI ChatMemory, Google ADK Memory Bank, Koog AgentMemory, Embabel, the Mem0 community wrapper, and Engram. What each one does, where each one stops.",
+  url: 'https://java-ai-memory.dev/',
+  datePublished: '2026-04-07',
+  dateModified: lastUpdatedISO,
+  author: {
+    '@type': 'Organization',
+    name: 'JamJet',
+    url: 'https://jamjet.dev',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'JamJet',
+    url: 'https://jamjet.dev',
+  },
+  image: 'https://java-ai-memory.dev/og-image.svg',
+  keywords:
+    'Java AI memory, JVM agent memory, Spring AI, LangChain4j, Koog, Mem0 Java, Zep Java, agent memory libraries, AI agents Java',
+  articleSection: 'Reference',
+  about: [
+    { '@type': 'Thing', name: 'AI agents' },
+    { '@type': 'Thing', name: 'Java' },
+    { '@type': 'Thing', name: 'Memory' },
+  ],
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Does Mem0 have an official Java SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "No. Mem0's first-party SDKs are Python and Node.js. The top Google result for 'Mem0 Java SDK' is a 9-star community REST wrapper that requires running a Python Mem0 server alongside your JVM application. It is not a serious production option for most JVM teams.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Zep have a Java SDK?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "No. Zep's official clients are Python, TypeScript, and Go. There is no Java SDK. JVM teams who want Zep's temporal knowledge graph must either consume Zep Cloud over HTTP or hand-roll a REST client.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Java AI memory library is best for Spring Boot applications?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "For chat history persistence, Spring AI ChatMemory with JDBC or Cassandra backends is the obvious choice — tightly integrated, well-documented, broad database support. For real knowledge memory (facts, conflict detection, temporal reasoning), no Spring-native option exists yet. Your choices are: build it yourself on Spring AI + pgvector, adopt Google ADK's Memory Bank (Vertex AI lock-in), or use Engram with manual bean wiring.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which Java AI memory library runs without infrastructure?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Engram is the only option on this list that runs against SQLite alone with no Postgres, no Qdrant, no Neo4j, and no Python sidecar. Engram is a new project (v0.4.3) with a small community. If you need production maturity today, accept the infrastructure cost of Spring AI + pgvector, or pay for a managed service like Mem0 Cloud or Zep Cloud.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "What is the difference between LangGraph4j, Koog persistence, and agent memory libraries?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "LangGraph4j and Koog's PersistenceStorageProvider solve a different problem — they checkpoint agent execution state for resume and replay. This is useful but it's not knowledge memory about the user. You can pair a state checkpointer with a memory layer; they don't compete.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How is java-ai-memory.dev maintained?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The site is maintained by the JamJet team (authors of Engram). Every library is presented with equal honesty, including explicit disclosure of gaps in Engram itself. Corrections and additions via pull request on GitHub are welcome, particularly from competitor maintainers.',
+      },
+    },
+  ],
+};
+
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Java AI Memory Libraries',
+  description: 'Agent memory libraries available on the JVM',
+  numberOfItems: libraries.length,
+  itemListElement: libraries.map((lib, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'SoftwareApplication',
+      name: lib.name,
+      description: lib.description,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Cross-platform',
+      url: lib.githubUrl || `https://java-ai-memory.dev/#${lib.id}`,
+      ...(lib.license !== '—' && lib.license !== 'N/A'
+        ? {
+            license: lib.license === 'Apache 2.0' ? 'https://www.apache.org/licenses/LICENSE-2.0' : lib.license,
+          }
+        : {}),
+      ...(lib.mavenCoordinates
+        ? {
+            softwareRequirements: lib.mavenCoordinates + (lib.latestVersion ? `:${lib.latestVersion}` : ''),
+          }
+        : {}),
+      ...(lib.latestVersion ? { softwareVersion: lib.latestVersion } : {}),
+    },
+  })),
+};
+
+const jsonLd = [websiteSchema, articleSchema, faqSchema, itemListSchema];
 
 function supportSymbol(s: Support): string {
   switch (s) {
@@ -58,8 +195,10 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
 ---
 
 <Layout
-  title="Java AI Memory — A comparison of agent memory libraries for the JVM"
-  description="A neutral, honest comparison of every option Java developers have for adding persistent memory to AI agents. Features, code samples, Maven coordinates, and the gaps in each."
+  title="Java AI Memory — The comparison of agent memory libraries for the JVM"
+  description="Every Java AI memory library compared: LangChain4j ChatMemory, Spring AI ChatMemory, Koog AgentMemory, Google ADK Memory Bank, Embabel, Mem0 Java, Engram. Feature matrix, Maven coordinates, code samples, and honest gaps for each."
+  canonical="https://java-ai-memory.dev/"
+  jsonLd={jsonLd}
 >
   <header class="site-header">
     <div class="container">
@@ -80,12 +219,13 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
   <section class="hero">
     <div class="container">
       <h1>
-        Every option for giving your Java AI agent <em>a real memory</em>.
+        Java AI agent memory: <em>every library, compared</em>.
       </h1>
       <p class="hero-lede">
-        A neutral comparison of agent memory libraries on the JVM — from LangChain4j ChatMemory
-        to Koog AgentMemory to the community Mem0 wrapper. What they do, what they don't,
-        and what Java AI teams actually end up building when none of them fit.
+        The definitive comparison of agent memory libraries on the JVM &mdash; from LangChain4j ChatMemory
+        and Spring AI ChatMemory to Koog AgentMemory, Google ADK Memory Bank, Embabel, and the
+        community Mem0 Java wrapper. What each one does, where each one stops, and what
+        Java AI teams actually end up building when none of them fit.
       </p>
       <p class="hero-meta">
         Last updated {lastUpdated} · {libraries.length} libraries tracked ·

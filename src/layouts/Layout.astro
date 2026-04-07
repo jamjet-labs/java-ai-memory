@@ -3,9 +3,19 @@ interface Props {
   title: string;
   description: string;
   canonical?: string;
+  ogImage?: string;
+  jsonLd?: object | object[];
 }
 
-const { title, description, canonical = 'https://java-ai-memory.dev/' } = Astro.props;
+const {
+  title,
+  description,
+  canonical = 'https://java-ai-memory.dev/',
+  ogImage = 'https://java-ai-memory.dev/og-image.svg',
+  jsonLd,
+} = Astro.props;
+
+const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
@@ -18,22 +28,59 @@ const { title, description, canonical = 'https://java-ai-memory.dev/' } = Astro.
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
+    <!-- Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Java AI Memory" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Java AI Memory — comparison of agent memory libraries for the JVM" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Java AI Memory — comparison of agent memory libraries" />
 
+    <!-- Article -->
+    <meta name="author" content="JamJet" />
+    <meta name="publisher" content="JamJet" />
+
+    <!-- Keywords (low SEO weight but fine) -->
+    <meta
+      name="keywords"
+      content="Java AI memory, JVM agent memory, Spring AI memory, LangChain4j memory, Koog AgentMemory, Mem0 Java, Zep Java, AI agent memory comparison, Java AI agents, agent memory libraries"
+    />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <!-- RSS autodiscovery -->
+    <link rel="alternate" type="application/rss+xml" title="Java AI Memory — updates" href="/rss.xml" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Structured data (JSON-LD) -->
+    {
+      jsonLdArray.map((ld) => (
+        <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+      ))
+    }
   </head>
   <body>
     <slot />
