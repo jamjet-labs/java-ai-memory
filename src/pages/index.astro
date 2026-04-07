@@ -466,10 +466,19 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
           obvious choice — it's tightly integrated, well-documented, and has broad database support.
         </p>
         <p>
-          For real knowledge memory (facts, conflict detection, temporal reasoning), no Spring-native
-          option exists yet. Your choices are: build it yourself on top of Spring AI + pgvector,
-          adopt Google ADK's Memory Bank (Vertex AI lock-in), or use Engram with manual
-          <code>@Bean</code> wiring until a Spring Boot starter ships.
+          For real knowledge memory (facts, conflict detection, temporal reasoning), Engram now
+          ships a Spring Boot starter with auto-configuration, properties binding, and an optional
+          Actuator health indicator:
+        </p>
+        <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;dev.jamjet&lt;/groupId&gt;
+  &lt;artifactId&gt;engram-spring-boot-starter&lt;/artifactId&gt;
+  &lt;version&gt;0.1.1&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+        <p>
+          Configure via <code>engram.base-url</code> in <code>application.yml</code> and inject
+          <code>EngramClient</code> into your services. Alternative options: build it yourself on
+          Spring AI + pgvector, or adopt Google ADK's Memory Bank (Vertex AI lock-in).
         </p>
       </div>
 

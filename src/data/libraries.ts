@@ -418,12 +418,12 @@ ChatClient client = ChatClient.builder(chatModel)
     strengths: [
       'Only library on this list with fact extraction + hybrid retrieval + temporal graph + consolidation in one dependency',
       'Zero infrastructure — SQLite only, no Postgres, no Qdrant, no Neo4j, no Python sidecar',
+      'Spring Boot starter with auto-configuration (engram-spring-boot-starter:0.1.1)',
       'MCP server option means the same store is reachable from non-JVM agents',
       'Published on Maven Central, Apache 2.0',
     ],
     gaps: [
       'Version 0.4.3 — new project, small community',
-      'No Spring Boot auto-configuration yet (manual @Bean wiring)',
       'No JDBC backend yet (SQLite-first, Postgres planned for 0.5.x)',
       'No published LongMemEval or DMR benchmark scores yet',
       '5 GitHub stars — you will be an early adopter',
