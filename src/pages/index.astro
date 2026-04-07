@@ -1,0 +1,431 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { libraries, features, type Support, type MaintenanceStatus } from '../data/libraries';
+
+const lastUpdated = 'April 7, 2026';
+
+function supportSymbol(s: Support): string {
+  switch (s) {
+    case 'yes':
+      return '●';
+    case 'partial':
+      return '◐';
+    case 'no':
+      return '○';
+    case 'na':
+      return '—';
+  }
+}
+
+function supportClass(s: Support): string {
+  switch (s) {
+    case 'yes':
+      return 'support-yes';
+    case 'partial':
+      return 'support-partial';
+    case 'no':
+      return 'support-no';
+    case 'na':
+      return 'support-na';
+  }
+}
+
+function supportLabel(s: Support): string {
+  switch (s) {
+    case 'yes':
+      return 'Yes';
+    case 'partial':
+      return 'Partial';
+    case 'no':
+      return 'No';
+    case 'na':
+      return 'N/A';
+  }
+}
+
+function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } {
+  switch (m) {
+    case 'active':
+      return { label: 'Active', cls: 'badge-active' };
+    case 'community':
+      return { label: 'Community (unmaintained)', cls: 'badge-community' };
+    case 'abandoned':
+      return { label: 'Abandoned', cls: 'badge-abandoned' };
+    case 'does-not-exist':
+      return { label: 'Does not exist', cls: 'badge-does-not-exist' };
+  }
+}
+---
+
+<Layout
+  title="Java AI Memory — A comparison of agent memory libraries for the JVM"
+  description="A neutral, honest comparison of every option Java developers have for adding persistent memory to AI agents. Features, code samples, Maven coordinates, and the gaps in each."
+>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <h1 class="site-title">
+          <a href="/">Java AI Memory</a>
+        </h1>
+        <nav class="site-nav">
+          <a href="#libraries">Libraries</a>
+          <a href="#matrix">Matrix</a>
+          <a href="#faq">FAQ</a>
+          <a href="#about">About</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>
+        Every option for giving your Java AI agent <em>a real memory</em>.
+      </h1>
+      <p class="hero-lede">
+        A neutral comparison of agent memory libraries on the JVM — from LangChain4j ChatMemory
+        to Koog AgentMemory to the community Mem0 wrapper. What they do, what they don't,
+        and what Java AI teams actually end up building when none of them fit.
+      </p>
+      <p class="hero-meta">
+        Last updated {lastUpdated} · {libraries.length} libraries tracked ·
+        <a
+          href="https://github.com/jamjet-labs/java-ai-memory"
+          target="_blank"
+          rel="noopener">Edit on GitHub</a
+        >
+      </p>
+    </div>
+  </section>
+
+  <!-- What we mean by memory -->
+  <section class="section">
+    <div class="container-narrow">
+      <span class="section-label">Scope</span>
+      <h2>"Memory" means three different things.</h2>
+      <p class="section-intro">
+        Before the comparison makes sense, we need to be precise. There are at least three things
+        people mean when they say "agent memory," and most discussions conflate them:
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 32px;">
+        <div>
+          <h3 style="font-size: 20px; margin: 0 0 8px;">1. Conversation history</h3>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.7;">
+            The last N messages of the current session. Solved problem — every framework ships this.
+            This is what LangChain4j ChatMemory and Spring AI ChatMemory do.
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 20px; margin: 0 0 8px;">2. State checkpointing</h3>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.7;">
+            Snapshots of agent execution state for resume and replay. Solved by LangGraph, Koog
+            persistence, Temporal-style runtimes. A different problem from knowledge memory entirely.
+          </p>
+        </div>
+        <div>
+          <h3 style="font-size: 20px; margin: 0 0 8px;">3. Long-term knowledge memory</h3>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.7;">
+            Facts about the user, their preferences, their projects — extracted from conversations,
+            stored durably, retrievable across sessions, and de-conflicted when they change.
+            This is what Mem0, Zep, and Letta do in Python. <strong>It is not solved on the JVM.</strong>
+          </p>
+          <p style="margin: 12px 0 0; color: var(--text-secondary); line-height: 1.7;">
+            This site is about the third one.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature matrix -->
+  <section class="section" id="matrix" style="background: var(--bg-alt);">
+    <div class="container">
+      <span class="section-label">At a glance</span>
+      <h2>Feature matrix</h2>
+      <p class="section-intro">
+        Every library on the JVM with any form of agent memory support, and what each actually does.
+        Hover or tap the column headers to jump to the library details.
+      </p>
+
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th style="min-width: 200px;">Feature</th>
+              {
+                libraries.map((lib) => (
+                  <th>
+                    <a href={`#${lib.id}`} style="color: inherit; text-decoration: none;">
+                      {lib.name.split(' ')[0]}
+                      {lib.name.includes('Java') && lib.name.includes('community') && ' (wrap)'}
+                    </a>
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              features.map((f) => (
+                <tr>
+                  <th title={f.description}>{f.label}</th>
+                  {libraries.map((lib) => {
+                    const s = lib.features[f.key];
+                    return (
+                      <td class={supportClass(s)} title={supportLabel(s)}>
+                        {supportSymbol(s)}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="matrix-legend">
+        <span><span class="support-yes">●</span> Yes</span>
+        <span><span class="support-partial">◐</span> Partial</span>
+        <span><span class="support-no">○</span> No</span>
+        <span><span class="support-na">—</span> Not applicable</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Library cards -->
+  <section class="section" id="libraries">
+    <div class="container">
+      <span class="section-label">Detailed breakdown</span>
+      <h2>The libraries</h2>
+      <p class="section-intro">
+        One card per option. For each: what it is, what it does well, what it doesn't, the
+        exact Maven coordinates when applicable, and a representative code example.
+      </p>
+
+      {
+        libraries.map((lib) => {
+          const mb = maintenanceBadge(lib.maintenance);
+          return (
+            <article class="library-card" id={lib.id}>
+              <div class="library-card-header">
+                <h3>
+                  {lib.githubUrl ? (
+                    <a href={lib.githubUrl} target="_blank" rel="noopener">
+                      {lib.name}
+                    </a>
+                  ) : (
+                    lib.name
+                  )}
+                </h3>
+              </div>
+              <p class="library-tagline">{lib.tagline}</p>
+
+              <div class="library-meta">
+                <span class="badge badge-category">{lib.category}</span>
+                <span class={`badge ${mb.cls}`}>{mb.label}</span>
+                <span class="badge badge-lang">{lib.language}</span>
+                <span class="badge badge-license">{lib.license}</span>
+                {lib.stars !== undefined && (
+                  <span class="badge badge-stars">★ {lib.stars.toLocaleString()}</span>
+                )}
+              </div>
+
+              <p class="library-description">{lib.description}</p>
+
+              {lib.mavenCoordinates && (
+                <div class="library-maven-coords">
+                  {lib.mavenCoordinates}{lib.latestVersion ? `:${lib.latestVersion}` : ''}
+                </div>
+              )}
+
+              <div class="library-grid">
+                {lib.strengths.length > 0 && (
+                  <div>
+                    <h4>What it does well</h4>
+                    <ul>
+                      {lib.strengths.map((s) => (
+                        <li>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {lib.gaps.length > 0 && (
+                  <div>
+                    <h4>Where it stops</h4>
+                    <ul>
+                      {lib.gaps.map((g) => (
+                        <li>{g}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {lib.codeExample && (
+                <div class="library-code">
+                  <pre><code>{lib.codeExample}</code></pre>
+                </div>
+              )}
+
+              {lib.notes && <div class="library-notes">{lib.notes}</div>}
+
+              <div class="library-links">
+                {lib.docsUrl && (
+                  <a href={lib.docsUrl} target="_blank" rel="noopener">
+                    Docs
+                  </a>
+                )}
+                {lib.githubUrl && (
+                  <a href={lib.githubUrl} target="_blank" rel="noopener">
+                    GitHub
+                  </a>
+                )}
+                {lib.mavenCentralUrl && (
+                  <a href={lib.mavenCentralUrl} target="_blank" rel="noopener">
+                    Maven Central
+                  </a>
+                )}
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" style="background: var(--bg-alt);">
+    <div class="container-narrow">
+      <span class="section-label">Frequently asked</span>
+      <h2>FAQ</h2>
+
+      <div class="faq-item">
+        <h3>Does Mem0 have an official Java SDK?</h3>
+        <p>
+          No. Mem0's first-party SDKs are Python and Node.js. The top Google result for "Mem0 Java
+          SDK" is a 9-star community REST wrapper that requires running a Python Mem0 server alongside
+          your JVM application. It is not a serious production option for most JVM teams.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does Zep have a Java SDK?</h3>
+        <p>
+          No. Zep's official clients are Python, TypeScript, and Go. There is no Java SDK at any
+          state of completeness. Java teams who want Zep's temporal knowledge graph must either
+          consume Zep Cloud over HTTP or hand-roll a REST client.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Which library should I use if I'm already on Spring Boot?</h3>
+        <p>
+          For chat history persistence, Spring AI ChatMemory with JDBC or Cassandra backends is the
+          obvious choice — it's tightly integrated, well-documented, and has broad database support.
+        </p>
+        <p>
+          For real knowledge memory (facts, conflict detection, temporal reasoning), no Spring-native
+          option exists yet. Your choices are: build it yourself on top of Spring AI + pgvector,
+          adopt Google ADK's Memory Bank (Vertex AI lock-in), or use Engram with manual
+          <code>@Bean</code> wiring until a Spring Boot starter ships.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Which library should I use if I want zero infrastructure?</h3>
+        <p>
+          Engram is the only option on this list that runs against SQLite alone with no Postgres,
+          no Qdrant, no Neo4j, and no Python sidecar. That said, Engram is a new project (v0.4.3)
+          with a small community. If you need production maturity today, accept the infrastructure
+          cost of building something on Spring AI + pgvector, or pay for a managed service.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What about LangGraph4j and Koog persistence?</h3>
+        <p>
+          LangGraph4j and Koog's PersistenceStorageProvider solve a different problem — they
+          checkpoint agent execution state for resume and replay. This is useful but it's not
+          knowledge memory. You can pair a state checkpointer with a memory layer; they don't
+          compete.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How is this page maintained?</h3>
+        <p>
+          The site is maintained by the JamJet team (authors of Engram). We have tried to present
+          every library with equal honesty — including the gaps in Engram itself. If you find an
+          inaccuracy, please open a PR or an issue on the
+          <a href="https://github.com/jamjet-labs/java-ai-memory" target="_blank" rel="noopener">
+            source repository</a
+          >. We will treat corrections from competitors' maintainers as a priority.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="container-narrow">
+      <span class="section-label">About this site</span>
+      <h2>Methodology &amp; bias</h2>
+
+      <p>
+        This site was built because several of us hit the same wall looking for a Java equivalent of
+        Mem0 or Zep and kept ending up on GitHub issues asking the same question. We wrote down what
+        we found and turned it into a comparison.
+      </p>
+
+      <p>
+        <strong>Who maintains it:</strong> The JamJet team
+        (<a href="https://jamjet.dev" target="_blank" rel="noopener">jamjet.dev</a>). Engram, the
+        last library on the list, is our project. We are not a neutral third party. What we are is
+        honest about it — this page exists, Engram gets the same feature matrix treatment as every
+        other library, and we disclose gaps in Engram (no Spring Boot starter, no JDBC backend, no
+        published benchmarks yet) with the same candor we apply to Koog, Mem0, and the rest.
+      </p>
+
+      <p>
+        <strong>How features are scored:</strong>
+      </p>
+      <ul style="line-height: 1.7; color: var(--text-secondary);">
+        <li><strong>Yes</strong> — the library ships this feature as a documented, supported capability.</li>
+        <li><strong>Partial</strong> — the feature exists but with significant caveats (Kotlin-only idioms, vendor lock-in, requires bolt-on work).</li>
+        <li><strong>No</strong> — not supported; you would need to build or integrate it yourself.</li>
+        <li><strong>N/A</strong> — the feature does not apply to that category of library.</li>
+      </ul>
+
+      <p>
+        <strong>Corrections welcome:</strong> If you maintain one of these libraries and disagree
+        with a rating, or if we've missed a library that belongs on this list, open an issue or a
+        PR on
+        <a href="https://github.com/jamjet-labs/java-ai-memory" target="_blank" rel="noopener">
+          github.com/jamjet-labs/java-ai-memory</a
+        >. We will update the site on accepted changes, not just our own releases.
+      </p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer-inner">
+        <div>
+          <strong>Java AI Memory</strong> · maintained by the
+          <a href="https://jamjet.dev" target="_blank" rel="noopener">JamJet</a> team
+        </div>
+        <div>
+          <a href="https://github.com/jamjet-labs/java-ai-memory" target="_blank" rel="noopener">
+            GitHub
+          </a>
+          {' · '}
+          <a href="/rss.xml">RSS</a>
+          {' · '}
+          Last updated {lastUpdated}
+        </div>
+      </div>
+    </div>
+  </footer>
+</Layout>
