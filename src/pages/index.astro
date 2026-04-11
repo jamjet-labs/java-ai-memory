@@ -2,8 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import { libraries, features, type Support, type MaintenanceStatus } from '../data/libraries';
 
-const lastUpdated = 'April 7, 2026';
-const lastUpdatedISO = '2026-04-07';
+const lastUpdated = 'April 12, 2026';
+const lastUpdatedISO = '2026-04-12';
 
 // ── Structured data ────────────────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ const faqSchema = {
       name: 'Which Java AI memory library is best for Spring Boot applications?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "For chat history persistence, Spring AI ChatMemory with JDBC or Cassandra backends is the obvious choice — tightly integrated, well-documented, broad database support. For real knowledge memory (facts, conflict detection, temporal reasoning), no Spring-native option exists yet. Your choices are: build it yourself on Spring AI + pgvector, adopt Google ADK's Memory Bank (Vertex AI lock-in), or use Engram with manual bean wiring.",
+        text: "For chat history persistence, Spring AI ChatMemory with JDBC or Cassandra backends is the obvious choice — tightly integrated, well-documented, broad database support. For real knowledge memory (facts, conflict detection, temporal reasoning), Engram now offers a Spring Boot starter (0.2.0) with auto-configured ChatMemoryRepository and EngramContextAdvisor. Other options: build it yourself on Spring AI + pgvector, or adopt Google ADK's Memory Bank (Vertex AI lock-in).",
       },
     },
     {
@@ -86,7 +86,7 @@ const faqSchema = {
       name: 'Which Java AI memory library runs without infrastructure?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Engram is the only option on this list that runs against SQLite alone with no Postgres, no Qdrant, no Neo4j, and no Python sidecar. Engram is a new project (v0.4.3) with a small community. If you need production maturity today, accept the infrastructure cost of Spring AI + pgvector, or pay for a managed service like Mem0 Cloud or Zep Cloud.',
+        text: 'Engram runs against SQLite by default with no external infrastructure, and also supports PostgreSQL for teams that need a shared database. Engram is a new project (v0.5.0) with a small community. If you need production maturity today, accept the infrastructure cost of Spring AI + pgvector, or pay for a managed service like Mem0 Cloud or Zep Cloud.',
       },
     },
     {
@@ -473,20 +473,20 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
         <pre><code>&lt;dependency&gt;
   &lt;groupId&gt;dev.jamjet&lt;/groupId&gt;
   &lt;artifactId&gt;engram-spring-boot-starter&lt;/artifactId&gt;
-  &lt;version&gt;0.1.1&lt;/version&gt;
+  &lt;version&gt;0.2.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
         <p>
-          Configure via <code>engram.base-url</code> in <code>application.yml</code> and inject
-          <code>EngramClient</code> into your services. Alternative options: build it yourself on
-          Spring AI + pgvector, or adopt Google ADK's Memory Bank (Vertex AI lock-in).
+          Configure via <code>engram.base-url</code> in <code>application.yml</code>. The starter
+          auto-configures both <code>EngramContextAdvisor</code> (knowledge injection) and
+          <code>ChatMemoryRepository</code> (message persistence) for Spring AI.
         </p>
       </div>
 
       <div class="faq-item">
         <h3>Which library should I use if I want zero infrastructure?</h3>
         <p>
-          Engram is the only option on this list that runs against SQLite alone with no Postgres,
-          no Qdrant, no Neo4j, and no Python sidecar. That said, Engram is a new project (v0.4.3)
+          Engram runs against SQLite by default with no external infrastructure, and also supports
+          PostgreSQL for teams that need a shared database. That said, Engram is a new project (v0.5.0)
           with a small community. If you need production maturity today, accept the infrastructure
           cost of building something on Spring AI + pgvector, or pay for a managed service.
         </p>
@@ -533,8 +533,8 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
         (<a href="https://jamjet.dev" target="_blank" rel="noopener">jamjet.dev</a>). Engram, the
         last library on the list, is our project. We are not a neutral third party. What we are is
         honest about it — this page exists, Engram gets the same feature matrix treatment as every
-        other library, and we disclose gaps in Engram (no Spring Boot starter, no JDBC backend, no
-        published benchmarks yet) with the same candor we apply to Koog, Mem0, and the rest.
+        other library, and we disclose gaps in Engram (no published benchmarks yet, small community)
+        with the same candor we apply to Koog, Mem0, and the rest.
       </p>
 
       <p>
