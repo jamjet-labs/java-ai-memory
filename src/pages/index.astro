@@ -1,9 +1,30 @@
 ---
+import { execSync } from 'node:child_process';
 import Layout from '../layouts/Layout.astro';
 import { libraries, features, type Support, type MaintenanceStatus } from '../data/libraries';
 
-const lastUpdated = 'May 12, 2026';
-const lastUpdatedISO = '2026-05-12';
+// Derive "last updated" from the last commit that touched the data file.
+// Falls back to today's build date if git history isn't available
+// (e.g. shallow clone where libraries.ts wasn't in the last commit).
+function deriveLastUpdated(): { iso: string; pretty: string } {
+  let iso: string;
+  try {
+    const out = execSync('git log -1 --format=%aI -- src/data/libraries.ts', {
+      encoding: 'utf8',
+    }).trim();
+    iso = out ? out.slice(0, 10) : new Date().toISOString().slice(0, 10);
+  } catch {
+    iso = new Date().toISOString().slice(0, 10);
+  }
+  const pretty = new Date(iso).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  return { iso, pretty };
+}
+
+const { iso: lastUpdatedISO, pretty: lastUpdated } = deriveLastUpdated();
 
 // ── Structured data ────────────────────────────────────────────────────────
 

@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed so index.astro can derive lastUpdated from git log
 
       - name: Setup Node
         uses: actions/setup-node@v4
