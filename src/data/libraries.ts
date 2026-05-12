@@ -390,18 +390,18 @@ ChatClient client = ChatClient.builder(chatModel)
   {
     id: 'engram',
     name: 'Engram (JamJet)',
-    tagline: 'Fact extraction, hybrid retrieval, consolidation — in one dependency',
+    tagline: 'Fact extraction, hybrid retrieval, explicit supersession, benchmarked',
     category: 'Memory Layer',
     description:
-      'A durable memory system for AI agents from the JamJet project. Does fact extraction with conflict detection, hybrid retrieval (vector + keyword + graph walk), temporal knowledge graph, token-budgeted context assembly, and a 5-operation consolidation engine (decay, promote, dedup, summarize, reflect). Runs against SQLite by default with an optional PostgreSQL backend.',
-    language: 'Java / Rust',
+      "A durable memory system for AI agents from the JamJet team. Ships LLM-driven fact extraction, hybrid retrieval (vector + FTS keyword + temporal scoring, with optional cross-encoder rerank), explicit fact supersession (supersede(old_id, new_id) with recall filtering by default), per-tenant scope isolation (user_id + org_id), and mode-aware reading (recall vs synthesis). Benchmarked at 71% overall on LongMemEval-S (500q, gpt-4o-mini judge) with per-category numbers and ablation history published. JVM access via engram-spring-boot-starter on Maven Central with Spring AI ChatMemoryRepository auto-configuration, or via MCP server (memory_record, memory_recall, memory_context) reachable from any HTTP client. Zero infrastructure by default (SQLite + hnswlib); PostgreSQL optional.",
+    language: 'Python core, JVM via Spring Boot starter or MCP HTTP',
     license: 'Apache 2.0',
-    mavenCoordinates: 'dev.jamjet:jamjet-sdk',
-    latestVersion: '0.5.0',
-    githubUrl: 'https://github.com/jamjet-labs/jamjet',
-    docsUrl: 'https://docs.jamjet.dev',
-    mavenCentralUrl: 'https://central.sonatype.com/artifact/dev.jamjet/jamjet-sdk',
-    stars: 5,
+    mavenCoordinates: 'dev.jamjet:engram-spring-boot-starter',
+    latestVersion: '0.2.0 (engram-spring-boot-starter); jamjet-engram 0.2.0 on PyPI',
+    githubUrl: 'https://github.com/jamjet-labs/engram',
+    docsUrl: 'https://jamjet.dev/engram',
+    mavenCentralUrl: 'https://central.sonatype.com/artifact/dev.jamjet/engram-spring-boot-starter',
+    stars: 0,
     maintenance: 'active',
     features: {
       chatHistory: 'yes',
@@ -409,43 +409,44 @@ ChatClient client = ChatClient.builder(chatModel)
       conflictDetection: 'yes',
       vectorSearch: 'yes',
       keywordSearch: 'yes',
-      graphTraversal: 'yes',
+      graphTraversal: 'no',
       hybridRetrieval: 'yes',
       temporalReasoning: 'yes',
       tokenBudgeting: 'yes',
-      decayConsolidation: 'yes',
+      decayConsolidation: 'partial',
       mcpServer: 'yes',
       zeroInfrastructure: 'yes',
     },
     strengths: [
-      'Only library on this list with fact extraction + hybrid retrieval + temporal graph + consolidation in one dependency',
-      'Zero infrastructure by default (SQLite), or PostgreSQL for teams that want a shared database',
-      'Spring Boot starter with auto-configuration and Spring AI ChatMemoryRepository (engram-spring-boot-starter:0.2.0)',
-      'MCP server option means the same store is reachable from non-JVM agents',
-      'Published on Maven Central, Apache 2.0',
+      'Explicit fact supersession primitive (supersede) — newer facts override older ones, recall filters by default',
+      'Hybrid retrieval: vector (HNSW) + FTS keyword + temporal scoring + optional cross-encoder rerank',
+      'Mode-aware reading: Reader(mode=recall) (verifier-gated) vs Reader(mode=synthesis) (recommendation-grounded); routing preference questions to synthesis lifted single-session-preference from 29% to 71% on LongMemEval-S',
+      'Per-tenant Scope (user_id + org_id) partitioned at SQL and HNSW levels — no cross-tenant leakage by construction',
+      'Benchmarked at 71% overall on LongMemEval-S (500q, gpt-4o-mini judge) with per-category numbers and negative-result ablations published',
+      'JVM-native via engram-spring-boot-starter (auto-configures Spring AI ChatMemoryRepository)',
+      'Also exposes an MCP server reachable from any HTTP client via engram-server (ghcr.io/jamjet-labs/engram-py-server)',
+      'Apache 2.0, published on Maven Central + PyPI + crates.io + GHCR + Official MCP Registry',
     ],
     gaps: [
-      'Version 0.5.0 — new project, small community',
-      'No published LongMemEval or DMR benchmark scores yet',
-      '5 GitHub stars — you will be an early adopter',
+      'Brand-new project with no community traction yet (0 stars on jamjet-labs/engram at time of writing) — you will be an early adopter',
+      'True cross-session consolidation (merging, deduplication, decay) is on the roadmap; only supersession + scope isolation ship today',
+      '25pp gap to the AgentMemory frontier (96.2%) on LongMemEval-S — published as a public roadmap item, not hidden',
+      'Synthesis-mode reader is calibrated against gpt-4o-mini; Sonnet/Haiku currently regress on tool-protocol parsing',
     ],
-    codeExample: `try (var memory = new EngramClient(EngramConfig.defaults())) {
-    memory.add(
-        List.of(
-            Map.of("role", "user",      "content", "I'm allergic to peanuts"),
-            Map.of("role", "assistant", "content", "Got it.")
-        ),
-        "alice", null, null
-    );
+    codeExample: `// JVM path: engram-spring-boot-starter wires Spring AI ChatMemoryRepository
+@Autowired ChatMemoryRepository memory;
 
-    var context = memory.context(
-        "what should I cook for dinner",
-        "alice", null, 1000, "system_prompt"
-    );
-    System.out.println(context.get("text"));
-}`,
+memory.saveAll("alice", List.of(
+    new UserMessage("I'm allergic to peanuts."),
+    new AssistantMessage("Got it.")
+));
+
+List<Message> recent = memory.findByConversationId("alice");
+
+// Or run the MCP server and call it from any agent:
+//   docker run -p 7080:7080 ghcr.io/jamjet-labs/engram-py-server:latest`,
     notes:
-      'This site is maintained by the JamJet team. Engram is their project. We have tried to present it with the same honesty we apply to every other library here — including the gaps. Pull requests correcting any inaccuracy are welcome.',
+      'This site is maintained by the JamJet team. Engram is their project. We have tried to present it with the same honesty we apply to every other library here, including the gaps. Pull requests correcting any inaccuracy are welcome. Entry refreshed 2026-05-12 to reflect engram-spring-boot-starter 0.2.0 (Maven Central), jamjet-engram 0.2.0 (PyPI), and the published LongMemEval-S 71% benchmark.',
   },
 ];
 
