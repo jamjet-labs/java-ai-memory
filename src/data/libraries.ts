@@ -388,6 +388,66 @@ ChatClient client = ChatClient.builder(chatModel)
     ],
   },
   {
+    id: 'goodmem',
+    name: 'GoodMem',
+    tagline: 'Persistent memory and hybrid retrieval with an official Java SDK',
+    category: 'Memory Layer',
+    description:
+      'A memory and retrieval service for AI agents with an official Java 21+ SDK. GoodMem persists content and metadata in PostgreSQL, handles chunking and embedding on the server, and retrieves memories across sessions. Spaces can combine dense and sparse embedders with configurable weights; optional reranking and LLM summarization run in the retrieval pipeline. The SDK connects over HTTP to a separately deployed GoodMem server.',
+    language: 'Java 21+ SDK; separate Java server',
+    license: 'SDK: Apache 2.0; server: GoodMem Free Binary License v1.0',
+    mavenCoordinates: 'ai.pairsys:goodmem-java',
+    latestVersion: '0.2.2',
+    githubUrl: 'https://github.com/PAIR-Systems-Inc/goodmem-java',
+    docsUrl: 'https://docs.goodmem.ai/docs/reference/sdk/java/',
+    mavenCentralUrl: 'https://central.sonatype.com/artifact/ai.pairsys/goodmem-java',
+    maintenance: 'active',
+    features: {
+      chatHistory: 'partial',
+      factExtraction: 'no',
+      conflictDetection: 'no',
+      vectorSearch: 'yes',
+      keywordSearch: 'partial',
+      graphTraversal: 'no',
+      hybridRetrieval: 'yes',
+      temporalReasoning: 'no',
+      tokenBudgeting: 'no',
+      decayConsolidation: 'no',
+      mcpServer: 'yes',
+      zeroInfrastructure: 'no',
+    },
+    strengths: [
+      'Official Java SDK on Maven Central, with synchronous and asynchronous clients and streaming retrieval',
+      'Durable memory content and metadata, server-side chunking and embedding, and metadata-filtered retrieval',
+      'Weighted dense + sparse retrieval, with optional reranking and LLM summarization',
+      'MCP tools for memory operations; public LangChain4j and Spring AI integrations',
+    ],
+    gaps: [
+      'Conversation messages can be stored as memories, but applications must implement session/message conventions and history management',
+      'Keyword-style retrieval requires a sparse embedder such as SPLADE; no documented native BM25 or full-text-search interface',
+      'No built-in atomic fact extraction, contradiction/supersession handling, entity graph, temporal validity queries, or automatic decay/consolidation',
+      'Generation token limits constrain LLM output, not strict token-budgeted assembly of retrieved context',
+      'Requires a GoodMem server, PostgreSQL with pgvector, and configured embedding providers; the server uses a proprietary binary license',
+    ],
+    codeExample: `import ai.pairsys.goodmem.client.Goodmem;
+
+// Use an existing space whose memories have finished indexing.
+// Its configured embedders determine dense/sparse retrieval.
+try (Goodmem client = Goodmem.builder()
+        .baseUrl(System.getenv("GOODMEM_BASE_URL"))
+        .apiKey(System.getenv("GOODMEM_API_KEY"))
+        .build();
+     var events = client.memories.retrieve(
+        "What do we know about Alice's preferences?",
+        System.getenv("GOODMEM_SPACE_ID"))) {
+    for (var event : events) {
+        System.out.println(event);
+    }
+}`,
+    notes:
+      'Feature ratings distinguish persistent content retrieval from automatic knowledge-memory management: storing text is not fact extraction, chronological sorting is not temporal reasoning, and query-time summarization is not background consolidation. The SDK POM declares Apache 2.0; the separate server license is published at goodmem.ai/license. The linked GitHub repository mirrors SDK sources published on Maven Central; server source is not public. Verified 2026-09-24.',
+  },
+  {
     id: 'engram',
     name: 'Engram (JamJet)',
     tagline: 'Fact extraction, hybrid retrieval, explicit supersession, benchmarked',
