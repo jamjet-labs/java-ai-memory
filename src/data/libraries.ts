@@ -397,7 +397,7 @@ ChatClient client = ChatClient.builder(chatModel)
     language: 'Java 21+ SDK; separate Java server',
     license: 'SDK: Apache 2.0; server: GoodMem Free Binary License v1.0',
     mavenCoordinates: 'ai.pairsys:goodmem-java',
-    latestVersion: '0.2.2',
+    latestVersion: '0.2.12',
     githubUrl: 'https://github.com/PAIR-Systems-Inc/goodmem-java',
     docsUrl: 'https://docs.goodmem.ai/docs/reference/sdk/java/',
     mavenCentralUrl: 'https://central.sonatype.com/artifact/ai.pairsys/goodmem-java',
@@ -445,7 +445,7 @@ try (Goodmem client = Goodmem.builder()
     }
 }`,
     notes:
-      'Feature ratings distinguish persistent content retrieval from automatic knowledge-memory management: storing text is not fact extraction, chronological sorting is not temporal reasoning, and query-time summarization is not background consolidation. The SDK POM declares Apache 2.0; the separate server license is published at goodmem.ai/license. The linked GitHub repository mirrors SDK sources published on Maven Central; server source is not public. Verified 2026-09-24.',
+      'Feature ratings distinguish persistent content retrieval from automatic knowledge-memory management: storing text is not fact extraction, chronological sorting is not temporal reasoning, and query-time summarization is not background consolidation. The SDK POM declares Apache 2.0; the separate server license is published at goodmem.ai/license. The linked GitHub repository mirrors SDK sources published on Maven Central; server source is not public. Verified 2026-11-07.',
   },
   {
     id: 'engram',
