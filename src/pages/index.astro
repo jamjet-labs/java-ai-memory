@@ -107,7 +107,7 @@ const faqSchema = {
       name: 'Which Java AI memory library runs without infrastructure?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Engram runs against SQLite by default with no external infrastructure, and also supports PostgreSQL for teams that need a shared database. Engram is a new project (v0.5.0) with a small community. If you need production maturity today, accept the infrastructure cost of Spring AI + pgvector, or pay for a managed service like Mem0 Cloud or Zep Cloud.',
+        text: 'The Engram server runs on SQLite with no external database, but the JVM starter is an HTTP client, so you still run an Engram server alongside your app. There is no Postgres backend yet. Engram is a new project (Python library 0.2.0 on PyPI, Spring Boot starter 0.2.0) with a small community. If you need production maturity today, accept the infrastructure cost of Spring AI + pgvector, or pay for a managed service like Mem0 Cloud or Zep Cloud.',
       },
     },
     {
@@ -506,8 +506,9 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
       <div class="faq-item">
         <h3>Which library should I use if I want zero infrastructure?</h3>
         <p>
-          Engram runs against SQLite by default with no external infrastructure, and also supports
-          PostgreSQL for teams that need a shared database. That said, Engram is a new project (v0.5.0)
+          The Engram server runs on SQLite with no external database, but the JVM starter is an HTTP
+          client, so you still run an Engram server alongside your app. There is no Postgres backend
+          yet. Engram is a new project (Python library 0.2.0 on PyPI, Spring Boot starter 0.2.0)
           with a small community. If you need production maturity today, accept the infrastructure
           cost of building something on Spring AI + pgvector, or pay for a managed service.
         </p>
@@ -554,7 +555,7 @@ function maintenanceBadge(m: MaintenanceStatus): { label: string; cls: string } 
         (<a href="https://jamjet.dev" target="_blank" rel="noopener">jamjet.dev</a>). Engram, the
         last library on the list, is our project. We are not a neutral third party. What we are is
         honest about it — this page exists, Engram gets the same feature matrix treatment as every
-        other library, and we disclose gaps in Engram (no published benchmarks yet, small community)
+        other library, and we disclose gaps in Engram (the 71.0% LongMemEval-S result is on a 100-question subset, small community)
         with the same candor we apply to Koog, Mem0, and the rest.
       </p>
 
