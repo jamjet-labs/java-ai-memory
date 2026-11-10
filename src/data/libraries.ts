@@ -488,7 +488,7 @@ try (Goodmem client = Goodmem.builder()
       'Apache 2.0, published on Maven Central + PyPI + crates.io + GHCR + Official MCP Registry',
     ],
     gaps: [
-      'Brand-new project with no community traction yet (0 stars on jamjet-labs/engram at time of writing) — you will be an early adopter',
+      'Brand-new project with a very small community so far, so you will be an early adopter',
       'True cross-session consolidation (merging, deduplication, decay) is on the roadmap; only supersession + scope isolation ship today',
       'About 25pp behind the AgentMemory frontier (96.2%) on LongMemEval-S, though the two numbers are not like for like (our 71.0% is a 100-question subset)',
       'The JVM path needs a running Engram server, and the server is SQLite-only today; a Postgres backend is on the roadmap',
